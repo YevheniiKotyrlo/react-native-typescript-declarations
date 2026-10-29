@@ -1,79 +1,14 @@
-# react-native-typescript-declarations
+# React Native TypeScript declarations reproducer
 
-![Build](https://github.com/YevheniiKotyrlo/react-native-typescript-declarations/workflows/Pre%20Merge%20Checks/badge.svg)
+Made from the React Native reproducer template. `ReproducerApp` runs `react-native@0.89.0-nightly-20261029-25b05acd7` with TypeScript 7.0.2 and `@types/react` 19.3.0, and each check below type-checks a one-line import of `react-native` with `skipLibCheck: false` and `strict: true`.
 
-This is your new React Native Reproducer project.
-
-# Reproducer TODO list
-
-- [x] 1. Create a new reproducer project.
-- [ ] 2. Git clone your repository locally.
-- [ ] 3. Edit the project to reproduce the failure you're seeing.
-- [ ] 4. Push your changes, so that Github Actions can run the CI.
-- [ ] 5. Make sure the repository is public and share the link with the issue you reported.
-
-# How to use this Reproducer
-
-This project has been created with `npx @react-native-community/cli init` and is a vanilla React Native app.
-
-> [!IMPORTANT]  
-> Make sure you have completed the [React Native - Environment Setup](https://reactnative.dev/docs/set-up-your-environment) so that you have a working environment locally.
-
-## Step 1: Start the Metro Server
-
-First, you will need to start **Metro**, the JavaScript _bundler_ that ships _with_ React Native.
-
-To start Metro, run the following command from the _root_ of your React Native project:
-
-```bash
-# using npm
-npm start
-
-# OR using Yarn
-yarn start
+```sh
+cd ReproducerApp
+yarn install
 ```
 
-## Step 2: Start your Application
-
-Let Metro Bundler run in its _own_ terminal. Open a _new_ terminal from the _root_ of your React Native project. Run the following command to start your _Android_ or _iOS_ app:
-
-### For Android
-
-```bash
-# using npm
-npm run android
-
-# OR using Yarn
-yarn android
-```
-
-### For iOS
-
-First, make sure you install dependencies with:
-
-```bash
-cd ios && bundle install && bundle exec pod install
-```
-
-Then you can run the iOS app with:
-
-```bash
-# using npm
-npm run ios
-
-# OR using Yarn
-yarn ios
-```
-
-If everything is set up _correctly_, you should see your new app running in your _Android Emulator_ or _iOS Simulator_ shortly provided you have set up your emulator/simulator correctly.
-
-This is one way to run your app — you can also run it directly from within Android Studio and Xcode respectively.
-
-## Step 3: Modifying your App
-
-Now that you have successfully run the app, let's modify it.
-
-1. Open `App.tsx` in your text editor of choice and edit some lines.
-2. For **Android**: Press the <kbd>R</kbd> key twice or select **"Reload"** from the **Developer Menu** (<kbd>Ctrl</kbd> + <kbd>M</kbd> (on Window and Linux) or <kbd>Cmd ⌘</kbd> + <kbd>M</kbd> (on macOS)) to see your changes!
-
-   For **iOS**: Hit <kbd>Cmd ⌘</kbd> + <kbd>R</kbd> in your iOS Simulator to reload the app and see your changes!
+| Command | What it shows |
+| --- | --- |
+| `yarn check:declarations` | `types_generated` fails its own check with `lib: ["ES2024"]`: TS2411 in `AnimatedProps.d.ts`, TS2344 in `VirtualizedList.d.ts`, TS2416 in `ReactNativeDocument.d.ts` |
+| `yarn check:dom` | the same program with `lib: ["ES2024", "DOM", "DOM.Iterable"]`: `src/types/globals.d.ts`, which `types_generated/index.d.ts` references, redeclares `fetch`, `FormData`, `Blob`, `URL`, `WebSocket`, `AbortController` and more, against `lib.dom.d.ts` |
+| `yarn check:resolve-asset-source` and `yarn jest __tests__/resolveAssetSource-test.ts` | `Image.resolveAssetSource` is declared to return `ImageResolvedAssetSource \| undefined`, so `declarations/resolve-asset-source.ts` type-checks with only `undefined` ruled out; at runtime the function returns `null` for an unknown asset id and that code throws `TypeError: Cannot read properties of null (reading 'uri')` |

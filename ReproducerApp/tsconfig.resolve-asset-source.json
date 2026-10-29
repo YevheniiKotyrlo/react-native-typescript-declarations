@@ -1,0 +1,7 @@
+{
+  "extends": "./tsconfig.declarations.json",
+  "compilerOptions": {
+    "skipLibCheck": true
+  },
+  "files": ["declarations/resolve-asset-source.ts"]
+}
